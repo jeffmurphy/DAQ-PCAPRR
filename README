@@ -1,0 +1,49 @@
+This DAQ module implements "round robin" reading from network interfaces. 
+
+Normally you would use the bonding driver to bond network interfaces together,
+and then attach Snort to the bonded interface (e.g. bond0). 
+
+Systems equiped with high performance cards made by Endace.com are unable
+to do this (the bonding driver and the endace driver won't work with each 
+other). 
+
+This DAQ module was created to allow you to merge streams from multiple Endace 
+cards together. 
+
+
+Building the PCAPRR DAQ Module
+==============================
+
+    ./configure
+    make
+    sudo make install
+
+This will build and install this dynamic DAQ module.
+
+Note that pcap >= 1.0.0 is required.  pcap 1.1.1 is available at the time
+of this writing and is recommended.
+
+Using the Module
+================
+
+To listen on multiple interfaces (in this example the fourth stream from
+each card):
+
+    ./snort --daq-dir=/usr/lib64/daq --daq pcaprr -i dag0:4,dag1:4
+
+You are not limited to two interfaces. 
+
+You should adjust --dag-dir to point to whereever this module gets 
+installed (by 'make install') on your system.
+
+Reading from a file is not supported in this module, use the default "pcap" 
+module instead.
+
+You can specify the buffer size pcap uses with:
+
+    ./snort --daq-dir=/usr/lib64/daq --daq pcaprr --daq-var buffer_size=<#bytes> -i dev0,dev1,etc
+
+* The pcaprr DAQ does not count filtered packets. *
+
+
+
